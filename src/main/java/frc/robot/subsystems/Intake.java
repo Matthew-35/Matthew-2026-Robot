@@ -22,6 +22,8 @@ public class Intake extends SubsystemBase {
       new TalonFX(Constants.INTAKE_ROLLER_MAIN_LEFT, CANBus.roboRIO());
   private final TalonFX intakeRollerFollowerRight =
       new TalonFX(Constants.INTAKE_ROLLER_FOLLOWER_RIGHT, CANBus.roboRIO());
+    
+  private boolean isIntakeUp = true; // Track the state of the intake (up or down)
 
   /** Creates a new Intake. */
   public Intake() {}
@@ -59,10 +61,20 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.getConfigurator().apply(rollerConfig);
   }
 
+  public boolean getIsIntakeUp() {
+    return isIntakeUp;
+  }
+
+  public void setIsIntakeUp(boolean isUp) {
+    isIntakeUp = isUp;
+  }
+
   public void intakeUp() { // Move the intake up
+    isIntakeUp = true;
   }
 
   public void intakeDown() { // Move the intake down
+    isIntakeUp = false;
   }
 
   @Override
