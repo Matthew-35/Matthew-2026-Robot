@@ -36,7 +36,7 @@ public final class Constants {
   public static final int INTAKE_INNER_ROLLER = 16;
   public static final double INTAKE_PIVOT_MOTOR_ROTATIONS_TO_ROTATIONS =
       (28.0 / 12.0) * (3.0) * (4.0) * (48.0 / 16.0);
-  
+
   // Intake PID constants
   public final class PID {
     public final class IntakePivot {
@@ -50,6 +50,17 @@ public final class Constants {
       public static double kS = 0.;
       public static double kA = 0.;
     }
-  }
 
+    public final class IntakeRoller {
+      public static double maxVelocity = 50.;
+      public static double maxAcceleration = 1000.;
+      public static double maxJerk = 0.;
+      public static double kP = 0.5;
+      public static double kI = 0.;
+      public static double kD = 0.;
+      public static double kV = 0.098;
+      public static double kS = 0.;
+      public static double kA = 0.;
+    }
+  }
 }
