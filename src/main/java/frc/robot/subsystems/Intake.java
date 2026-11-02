@@ -8,9 +8,9 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 // From what I can tell, it seems like the intake has one motor to move
 // it up and down, and two motors to spin the rollers (which must be
@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase {
       new TalonFX(Constants.INTAKE_ROLLER_MAIN_LEFT, CANBus.roboRIO());
   private final TalonFX intakeRollerFollowerRight =
       new TalonFX(Constants.INTAKE_ROLLER_FOLLOWER_RIGHT, CANBus.roboRIO());
-    
+
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
 
@@ -63,11 +63,15 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.getConfigurator().apply(rollerConfig);
   }
 
-  public boolean getIsIntakeUp() { // Get the tracked state of the intake (up or down).  This does NOT read any sensors.
+  public boolean
+      getIsIntakeUp() { // Get the tracked state of the intake (up or down).  This does NOT read any
+    // sensors.
     return isIntakeUp;
   }
 
-  public void setIsIntakeUp(boolean isUp) { // Set the tracked state of the intake (up or down).  This does NOT move any motors.
+  public void setIsIntakeUp(
+      boolean isUp) { // Set the tracked state of the intake (up or down).  This does NOT move any
+    // motors.
     isIntakeUp = isUp;
   }
 
@@ -76,32 +80,39 @@ public class Intake extends SubsystemBase {
       isPivotMoving = true; // Run this just in case.
       return; // Intake is already up, no need to move it
     }
-    if (isPivotMoving) { // This should never happen, as isPivotMoving should be false unless the command was already running.
+    if (isPivotMoving) { // This should never happen, as isPivotMoving should be false unless the
+      // command was already running.
       stop(); // Stop the command if the intake is already moving
-      System.err.println("Intake pivot is already moving, but intakeUpStart() was called.  This should never happen.");
+      System.err.println(
+          "Intake pivot is already moving, but intakeUpStart() was called.  This should never happen.");
       return; // Intake is already moving, no need to move it
     }
     isIntakeUp = true;
     isPivotMoving = true;
-    // - get the current position of the intake pivot motor ( account for encoder offset from the start )
+    // - get the current position of the intake pivot motor ( account for encoder offset from the
+    // start )
     // - set the target position of the pivot motor to the up position
   }
 
   public FunctionalCommand getIntakeUpCommand(Intake intakeSubsystem) {
-        return new FunctionalCommand(
-            // initialize (starting)
-            () -> intakeUpStart(),
-            // execute (periodic)
-            () -> { /* code to run every 20ms */ },
-            // end (ending, receives boolean interrupted)
-            interrupted -> { intakeSubsystem.isPivotMoving = false; },
-            // isFinished (returns boolean)
-            () -> {return intakeSubsystem.isPivotMoving;}, 
-            // requirements
-            intakeSubsystem
-        );
-    }
-
+    return new FunctionalCommand(
+        // initialize (starting)
+        () -> intakeUpStart(),
+        // execute (periodic)
+        () -> {
+          /* code to run every 20ms */
+        },
+        // end (ending, receives boolean interrupted)
+        interrupted -> {
+          intakeSubsystem.isPivotMoving = false;
+        },
+        // isFinished (returns boolean)
+        () -> {
+          return intakeSubsystem.isPivotMoving;
+        },
+        // requirements
+        intakeSubsystem);
+  }
 
   public void intakeDown() { // Move the intake down
     isIntakeUp = false;
