@@ -73,8 +73,13 @@ public class Intake extends SubsystemBase {
 
   public void intakeUpStart() { // Move the intake up
     if (isIntakeUp) {
-      stop(); // Stop the command if the intake is already up
+      isPivotMoving = true; // Run this just in case.
       return; // Intake is already up, no need to move it
+    }
+    if (isPivotMoving) { // This should never happen, as isPivotMoving should be false unless the command was already running.
+      stop(); // Stop the command if the intake is already moving
+      System.err.println("Intake pivot is already moving, but intakeUpStart() was called.  This should never happen.");
+      return; // Intake is already moving, no need to move it
     }
     isIntakeUp = true;
     isPivotMoving = true;
@@ -89,7 +94,7 @@ public class Intake extends SubsystemBase {
             // execute (periodic)
             () -> { /* code to run every 20ms */ },
             // end (ending, receives boolean interrupted)
-            interrupted -> { /* code to run when finished/interrupted */ },
+            interrupted -> { intakeSubsystem.isPivotMoving = false; },
             // isFinished (returns boolean)
             () -> {return intakeSubsystem.isPivotMoving;}, 
             // requirements
