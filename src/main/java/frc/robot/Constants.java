@@ -40,13 +40,15 @@ public final class Constants {
   // Intake PID constants
   public final class PID {
     public final class IntakePivot {
-      // 1., 0., 0., 0.11, 0., 0.
-      public static double KP = 1.;
-      public static double KI = 0.;
-      public static double KD = 0.;
-      public static double KV = 0.11;
-      public static double KS = 0.;
-      public static double KA = 0.;
+      public static double maxVelocity = 50.;
+      public static double maxAcceleration = 1000.;
+      public static double maxJerk = 0.;
+      public static double kP = 1.;
+      public static double kI = 0.;
+      public static double kD = 0.;
+      public static double kV = 0.11;
+      public static double kS = 0.;
+      public static double kA = 0.;
     }
   }
 

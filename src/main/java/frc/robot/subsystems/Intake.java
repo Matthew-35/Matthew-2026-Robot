@@ -27,18 +27,17 @@ public class Intake extends SubsystemBase {
 
   public void setupMotors() {
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
-    pivotConfig.Slot0.kP = intakePivotConfigConstants.getKP().getValue();
-    pivotConfig.Slot0.kI = intakePivotConfigConstants.getKI().getValue();
-    pivotConfig.Slot0.kD = intakePivotConfigConstants.getKD().getValue();
-    pivotConfig.Slot0.kV = intakePivotConfigConstants.getKV().getValue();
-    pivotConfig.Slot0.kS = intakePivotConfigConstants.getKS().getValue();
+    pivotConfig.Slot0.kP = Constants.PID.IntakePivot.kP;
+    pivotConfig.Slot0.kI = Constants.PID.IntakePivot.kI;
+    pivotConfig.Slot0.kD = Constants.PID.IntakePivot.kD;
+    pivotConfig.Slot0.kV = Constants.PID.IntakePivot.kV;
+    pivotConfig.Slot0.kS = Constants.PID.IntakePivot.kS;
     pivotConfig.MotionMagic.MotionMagicCruiseVelocity =
-        intakePivotConfigConstants.getMaxVelocity().getValue();
+        Constants.PID.IntakePivot.maxVelocity;
     pivotConfig.MotionMagic.MotionMagicAcceleration =
-        intakePivotConfigConstants.getMaxAcceleration().getValue();
-    pivotConfig.MotionMagic.MotionMagicJerk = intakePivotConfigConstants.getMaxJerk().getValue();
+        Constants.PID.IntakePivot.maxAcceleration;
+    pivotConfig.MotionMagic.MotionMagicJerk = Constants.PID.IntakePivot.maxJerk;
     pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    // TODO: Setup the pivot motor
     // TODO: Setup the roller motors, with one following the other
   }
 
