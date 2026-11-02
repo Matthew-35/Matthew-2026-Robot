@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 // From what I can tell, it seems like the intake has one motor to move
 // it up and down, and two motors to spin the rollers (which must be
@@ -24,6 +25,7 @@ public class Intake extends SubsystemBase {
       new TalonFX(Constants.INTAKE_ROLLER_FOLLOWER_RIGHT, CANBus.roboRIO());
     
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
+  public boolean isPivotMoving = false; // Track if the pivot is currently moving
 
   /** Creates a new Intake. */
   public Intake() {}
@@ -61,17 +63,40 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.getConfigurator().apply(rollerConfig);
   }
 
-  public boolean getIsIntakeUp() {
+  public boolean getIsIntakeUp() { // Get the tracked state of the intake (up or down).  This does NOT read any sensors.
     return isIntakeUp;
   }
 
-  public void setIsIntakeUp(boolean isUp) {
+  public void setIsIntakeUp(boolean isUp) { // Set the tracked state of the intake (up or down).  This does NOT move any motors.
     isIntakeUp = isUp;
   }
 
-  public void intakeUp() { // Move the intake up
+  public void intakeUpStart() { // Move the intake up
+    if (isIntakeUp) {
+      stop(); // Stop the command if the intake is already up
+      return; // Intake is already up, no need to move it
+    }
     isIntakeUp = true;
+    isPivotMoving = true;
+    // - get the current position of the intake pivot motor ( account for encoder offset from the start )
+    // - set the target position of the pivot motor to the up position
   }
+
+  public FunctionalCommand getIntakeUpCommand(Intake intakeSubsystem) {
+        return new FunctionalCommand(
+            // initialize (starting)
+            () -> intakeUpStart(),
+            // execute (periodic)
+            () -> { /* code to run every 20ms */ },
+            // end (ending, receives boolean interrupted)
+            interrupted -> { /* code to run when finished/interrupted */ },
+            // isFinished (returns boolean)
+            () -> {return intakeSubsystem.isPivotMoving;}, 
+            // requirements
+            intakeSubsystem
+        );
+    }
+
 
   public void intakeDown() { // Move the intake down
     isIntakeUp = false;
@@ -80,5 +105,10 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void stop() { // Stop the intake pivot motor
+    // intakePivot.setControl(0.0);
+    isPivotMoving = false;
   }
 }
