@@ -147,7 +147,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Some logging
+    // Pivot logging
     SmartDashboard.putNumber("Pivot/Pivot Position", intakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Pivot/Pivot Up Offset", pivotUpOffset);
     SmartDashboard.putNumber("Pivot/Pivot Down Offset", pivotDownOffset);
