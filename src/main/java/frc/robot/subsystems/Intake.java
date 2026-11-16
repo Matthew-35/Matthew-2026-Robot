@@ -26,6 +26,9 @@ public class Intake extends SubsystemBase {
 
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
+  private double intakeUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
+  private double intakeDownOffset =
+      0.0; // Track the encoder offset of the intake pivot when it is down
 
   /** Creates a new Intake. */
   public Intake() {}
@@ -72,6 +75,17 @@ public class Intake extends SubsystemBase {
   public void setIsIntakeUp(
       boolean isUp) { // Set the tracked state of the intake (up or down).  This does NOT move any
     // motors.
+    if (isUp) {
+      intakeUpOffset =
+          intakeRollerMainLeft
+              .getPosition()
+              .getValueAsDouble(); // Update the offset when the intake is set to up
+    } else {
+      intakeDownOffset =
+          intakeRollerMainLeft
+              .getPosition()
+              .getValueAsDouble(); // Update the offset when the intake is set to down
+    }
     isIntakeUp = isUp;
   }
 
@@ -123,7 +137,9 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void stop() { // Stop the intake pivot motor
+  public void stop() { // Stop all intake motors
+    // intakeRollerMainLeft.setControl(0.0);
+    // intakeRollerFollowerRight.setControl(0.0);
     // intakePivot.setControl(0.0);
     isPivotMoving = false;
   }
