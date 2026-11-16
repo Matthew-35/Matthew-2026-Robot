@@ -29,6 +29,9 @@ public class Intake extends SubsystemBase {
   private double intakeUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
   private double intakeDownOffset =
       0.0; // Track the encoder offset of the intake pivot when it is down
+  private double intakeTargetPosition = 0.0;
+
+  private final PositionVoltage m_positionRequest = new PositionVoltage(0).withSlot(0);
 
   /** Creates a new Intake. */
   public Intake() {}
@@ -103,9 +106,20 @@ public class Intake extends SubsystemBase {
     }
     isIntakeUp = true;
     isPivotMoving = true;
+    intakeTargetPosition = intakeUpOffset;
+
+    intakePivot.setControl(m_positionRequest.withPosition(intakeTargetPosition));
+
+
     // - get the current position of the intake pivot motor ( account for encoder offset from the
     // start )
     // - set the target position of the pivot motor to the up position
+  }
+
+  private void intakePivotIsFinished() {
+    double currentPos = m_motor.getPosition().getValueAsDouble();
+    double toleranceRotations = Math.abs(intakeUpOffset - intakeUpOffset) * 0.1 // Tolerance is 10% of total distance
+    return Math.abs(targetRotations - currentPos) <= toleranceRotations;
   }
 
   public FunctionalCommand getIntakeUpCommand(Intake intakeSubsystem) {
@@ -121,9 +135,7 @@ public class Intake extends SubsystemBase {
           intakeSubsystem.isPivotMoving = false;
         },
         // isFinished (returns boolean)
-        () -> {
-          return intakeSubsystem.isPivotMoving;
-        },
+        () -> intakePivotIsFinished();
         // requirements
         intakeSubsystem);
   }
