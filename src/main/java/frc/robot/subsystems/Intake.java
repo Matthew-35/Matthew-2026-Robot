@@ -26,8 +26,8 @@ public class Intake extends SubsystemBase {
 
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
-  private double intakeUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
-  private double intakeDownOffset =
+  private double pivotUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up 
+  private double pivotDownOffset =
       0.0; // Track the encoder offset of the intake pivot when it is down
   private double intakeTargetPosition = 0.0;
 
@@ -79,13 +79,13 @@ public class Intake extends SubsystemBase {
       boolean isUp) { // Set the tracked state of the intake (up or down).  This does NOT move any
     // motors.
     if (isUp) {
-      intakeUpOffset =
-          intakeRollerMainLeft
+      pivotUpOffset =
+          intakePivot
               .getPosition()
               .getValueAsDouble(); // Update the offset when the intake is set to up
     } else {
-      intakeDownOffset =
-          intakeRollerMainLeft
+      pivotDownOffset =
+          intakePivot
               .getPosition()
               .getValueAsDouble(); // Update the offset when the intake is set to down
     }
@@ -106,7 +106,7 @@ public class Intake extends SubsystemBase {
     }
     isIntakeUp = true;
     isPivotMoving = true;
-    intakeTargetPosition = intakeUpOffset;
+    intakeTargetPosition = pivotUpOffset;
 
     intakePivot.setControl(m_positionRequest.withPosition(intakeTargetPosition));
 
@@ -118,7 +118,7 @@ public class Intake extends SubsystemBase {
 
   private void intakePivotIsFinished() {
     double currentPos = m_motor.getPosition().getValueAsDouble();
-    double toleranceRotations = Math.abs(intakeUpOffset - intakeDownOffset) * 0.1 // Tolerance is 10% of total distance
+    double toleranceRotations = Math.abs(pivotUpOffset - pivotDownOffset) * 0.1 // Tolerance is 10% of total distance
     return Math.abs(targetRotations - currentPos) <= toleranceRotations;
   }
 
@@ -147,7 +147,13 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Some logging
+    SmartDashboard.putNumber("Pivot/Pivot Position", intakePivot.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Pivot/Pivot Up Offset", pivotUpOffset);
+    SmartDashboard.putNumber("Pivot/Pivot Down Offset", pivotDownOffset);
+    SmartDashboard.putNumber("Pivot/Pivot Target Position", intakeTargetPosition);
+    SmartDashboard.putBoolean("Pivot/Pivot Is Up", isIntakeUp);
+    SmartDashboard.putBoolean("Pivot/Pivot Is Moving", isPivotMoving);
   }
 
   public void stop() { // Stop all intake motors
