@@ -118,7 +118,7 @@ public class Intake extends SubsystemBase {
 
   private void intakePivotIsFinished() {
     double currentPos = m_motor.getPosition().getValueAsDouble();
-    double toleranceRotations = Math.abs(intakeUpOffset - intakeUpOffset) * 0.1 // Tolerance is 10% of total distance
+    double toleranceRotations = Math.abs(intakeUpOffset - intakeDownOffset) * 0.1 // Tolerance is 10% of total distance
     return Math.abs(targetRotations - currentPos) <= toleranceRotations;
   }
 
