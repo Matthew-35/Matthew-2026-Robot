@@ -132,6 +132,7 @@ public class Intake extends SubsystemBase {
         },
         // end (ending, receives boolean interrupted)
         interrupted -> {
+          intakePivot.stopMotor();
           intakeSubsystem.isPivotMoving = false;
         },
         // isFinished (returns boolean)
@@ -150,9 +151,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void stop() { // Stop all intake motors
-    // intakeRollerMainLeft.setControl(0.0);
-    // intakeRollerFollowerRight.setControl(0.0);
-    // intakePivot.setControl(0.0);
+    intakePivot.stopMotor();
     isPivotMoving = false;
   }
 }
