@@ -6,8 +6,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,10 +28,10 @@ public class Intake extends SubsystemBase {
 
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
-  private double pivotUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up 
+  private double pivotUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
   private double pivotDownOffset =
       0.0; // Track the encoder offset of the intake pivot when it is down
-  private double intakeTargetPosition = 0.0;
+  private double pivotTargetPosition = 0.0;
 
   private final PositionVoltage m_positionRequest = new PositionVoltage(0).withSlot(0);
 
@@ -106,20 +108,20 @@ public class Intake extends SubsystemBase {
     }
     isIntakeUp = true;
     isPivotMoving = true;
-    intakeTargetPosition = pivotUpOffset;
+    pivotTargetPosition = pivotUpOffset;
 
-    intakePivot.setControl(m_positionRequest.withPosition(intakeTargetPosition));
-
+    intakePivot.setControl(m_positionRequest.withPosition(pivotTargetPosition));
 
     // - get the current position of the intake pivot motor ( account for encoder offset from the
     // start )
     // - set the target position of the pivot motor to the up position
   }
 
-  private void intakePivotIsFinished() {
-    double currentPos = m_motor.getPosition().getValueAsDouble();
-    double toleranceRotations = Math.abs(pivotUpOffset - pivotDownOffset) * 0.1 // Tolerance is 10% of total distance
-    return Math.abs(targetRotations - currentPos) <= toleranceRotations;
+  private boolean intakePivotIsFinished() {
+    double currentPos = intakePivot.getPosition().getValueAsDouble();
+    double toleranceRotations =
+        Math.abs(pivotUpOffset - pivotDownOffset) * 0.1; // Tolerance is 10% of total distance
+    return Math.abs(pivotTargetPosition - currentPos) <= toleranceRotations;
   }
 
   public FunctionalCommand getIntakeUpCommand(Intake intakeSubsystem) {
@@ -136,7 +138,7 @@ public class Intake extends SubsystemBase {
           intakeSubsystem.isPivotMoving = false;
         },
         // isFinished (returns boolean)
-        () -> intakePivotIsFinished();
+        () -> intakePivotIsFinished(),
         // requirements
         intakeSubsystem);
   }
@@ -151,7 +153,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Pivot/Pivot Position", intakePivot.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Pivot/Pivot Up Offset", pivotUpOffset);
     SmartDashboard.putNumber("Pivot/Pivot Down Offset", pivotDownOffset);
-    SmartDashboard.putNumber("Pivot/Pivot Target Position", intakeTargetPosition);
+    SmartDashboard.putNumber("Pivot/Pivot Target Position", pivotTargetPosition);
     SmartDashboard.putBoolean("Pivot/Pivot Is Up", isIntakeUp);
     SmartDashboard.putBoolean("Pivot/Pivot Is Moving", isPivotMoving);
   }
