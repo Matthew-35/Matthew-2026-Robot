@@ -177,10 +177,6 @@ public class Intake extends SubsystemBase {
         intakeSubsystem);
   }
 
-  public void intakeDown() { // Move the intake down
-    isIntakeUp = false;
-  }
-
   @Override
   public void periodic() {
     // Pivot logging
