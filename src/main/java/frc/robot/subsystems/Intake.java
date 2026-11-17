@@ -94,9 +94,9 @@ public class Intake extends SubsystemBase {
     isIntakeUp = isUp;
   }
 
-  public void intakeUpStart() { // Move the intake up
+  public void pivotUpStart() { // Move the intake up
     if (isIntakeUp) {
-      isPivotMoving = true; // Run this just in case.
+      stop(); // Stop the command because we don't need to move the pivot
       return; // Intake is already up, no need to move it
     }
     if (isPivotMoving) { // This should never happen, as isPivotMoving should be false unless the
@@ -111,10 +111,25 @@ public class Intake extends SubsystemBase {
     pivotTargetPosition = pivotUpOffset;
 
     intakePivot.setControl(m_positionRequest.withPosition(pivotTargetPosition));
+  }
 
-    // - get the current position of the intake pivot motor ( account for encoder offset from the
-    // start )
-    // - set the target position of the pivot motor to the up position
+  public void pivotDownStart() { // Move the intake up
+    if (!(isIntakeUp)) {
+      stop(); // Stop the command because we don't need to move the pivot
+      return; // Intake is already up, no need to move it
+    }
+    if (isPivotMoving) { // This should never happen, as isPivotMoving should be false unless the
+      // command was already running.
+      stop(); // Stop the command if the intake is already moving
+      System.err.println(
+          "Intake pivot is already moving, but intakeDownStart() was called.  This should never happen.");
+      return; // Intake is already moving, no need to move it
+    }
+    isIntakeUp = false;
+    isPivotMoving = true;
+    pivotTargetPosition = pivotDownOffset;
+
+    intakePivot.setControl(m_positionRequest.withPosition(pivotTargetPosition));
   }
 
   private boolean intakePivotIsFinished() {
@@ -127,7 +142,26 @@ public class Intake extends SubsystemBase {
   public FunctionalCommand getIntakeUpCommand(Intake intakeSubsystem) {
     return new FunctionalCommand(
         // initialize (starting)
-        () -> intakeUpStart(),
+        () -> pivotUpStart(),
+        // execute (periodic)
+        () -> {
+          /* code to run every 20ms */
+        },
+        // end (ending, receives boolean interrupted)
+        interrupted -> {
+          intakePivot.stopMotor();
+          intakeSubsystem.isPivotMoving = false;
+        },
+        // isFinished (returns boolean)
+        () -> intakePivotIsFinished(),
+        // requirements
+        intakeSubsystem);
+  }
+
+  public FunctionalCommand getIntakeDownCommand(Intake intakeSubsystem) {
+    return new FunctionalCommand(
+        // initialize (starting)
+        () -> pivotDownStart(),
         // execute (periodic)
         () -> {
           /* code to run every 20ms */
