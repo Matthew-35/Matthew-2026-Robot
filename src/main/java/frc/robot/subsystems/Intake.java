@@ -185,9 +185,9 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.setControl(m_dutyCycleRequest.withOutput(dutyCycle));
   }
 
-  public void startIntakeRoller() { // Start the intake rollers
+  public void startIntakeRoller(double multiplier) { // Start the intake rollers
     isRollerSpinning = true;
-    intakeRollerMainLeft.setControl(m_dutyCycleRequest.withOutput(0.5)); // TODO: Make this a preference.
+    intakeRollerMainLeft.setControl(m_dutyCycleRequest.withOutput(0.5 * multiplier)); // TODO: Make this a preference.
   }
 
   public void stopIntakeRoller() { // Stop the intake rollers
@@ -195,10 +195,26 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.stopMotor();
   }
 
-  public FunctionalCommand getIntakeSpinCommand(Intake intakeSubsystem) {
+  public FunctionalCommand getIntakeSpinCommand(Intake intakeSubsystem) { // Command to spin the intake rollers normally.
     return new FunctionalCommand(
         // initialize (starting)
-        () -> startIntakeRoller(),
+        () -> startIntakeRoller(1.0),
+        // execute (periodic)
+        () -> {
+          /* code to run every 20ms */
+        },
+        // end (ending, receives boolean interrupted)
+        interrupted -> stopIntakeRoller(),
+        // isFinished (returns boolean)
+        () -> intakePivotIsFinished(),
+        // requirements
+        intakeSubsystem);
+  }
+
+  public FunctionalCommand getIntakeSpinReverseCommand(Intake intakeSubsystem) { // Command to spin the intake in reverse.
+    return new FunctionalCommand(
+        // initialize (starting)
+        () -> startIntakeRoller(-1.0),
         // execute (periodic)
         () -> {
           /* code to run every 20ms */
