@@ -156,6 +156,11 @@ public class RobotContainer {
 
     SmartDashboard.putData("Intake/Intake Up", intake.getIntakeUpCommand(intake));
     SmartDashboard.putData("Intake/Intake Down", intake.getIntakeDownCommand(intake));
+
+    SmartDashboard.putData("Intake/Intake Spin", intake.getIntakeSpinCommand(intake));
+    SmartDashboard.putData("Intake/Intake Spin Reverse", intake.getIntakeSpinReverseCommand(intake));
+
+    SmartDashboard.putData("Intake/Intake Stop", Commands.runOnce(() -> intake.stop(), intake));
   }
 
   /**
