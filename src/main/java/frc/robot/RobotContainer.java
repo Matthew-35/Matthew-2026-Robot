@@ -170,6 +170,23 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    /* ----- Controller Bindings -----
+     * Left stick: translation
+     * Right stick: rotation
+    
+     * Left stick click: reset gyro to 0°
+    
+     * A button: lock to 0°
+     * X button: switch to X pattern
+     * B button: lower intake
+     * Y button: raise intake
+     
+     * Right trigger: spin intake forward
+     * Left trigger: spin intake reverse
+     * Right bumper: stop intake
+     * Left bumper: stop intake
+       ------------------------------- */
+
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -193,7 +210,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .leftStick()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -201,6 +218,26 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+    
+    controller
+        .rightTrigger()
+        .onTrue(intake.getIntakeSpinCommand(intake));
+    controller
+        .rightBumper()
+        .onTrue(Commands.runOnce(() -> intake.stop(), intake));
+    controller
+        .leftBumper()
+        .onTrue(intake.getIntakeSpinReverseCommand(intake));
+    controller
+        .leftBumper()
+        .onTrue(Commands.runOnce(() -> intake.stop(), intake));
+    
+    controller
+        .b()
+        .onTrue(intake.getIntakeDownCommand(intake));
+    controller
+        .y()
+        .onTrue(intake.getIntakeUpCommand(intake));
   }
 
   /**
