@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +41,13 @@ public class Intake extends SubsystemBase {
   private final DutyCycleOut m_dutyCycleRequest = new DutyCycleOut(0);
 
   /** Creates a new Intake. */
-  public Intake() {}
+  public Intake() {
+    Preferences.initDouble(
+        "Pivot/Pivot Duty Cycle", 0.5); // The duty cycle will be multiplied by -1 when going up.
+    Preferences.initDouble(
+        "Intake/Roller Duty Cycle",
+        0.5); // The roller duty cycle will be multiplied by -1 when running in reverse.
+  }
 
   public void setupMotors() {
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
@@ -114,7 +121,8 @@ public class Intake extends SubsystemBase {
     isPivotMoving = true;
     pivotTargetPosition = pivotUpOffset;
 
-    intakePivot.setControl(m_positionRequest.withPosition(pivotTargetPosition));
+    intakePivot.setControl(
+        m_dutyCycleRequest.withOutput(-Preferences.getDouble("Pivot/Pivot Duty Cycle", 0.5)));
   }
 
   public void pivotDownStart() { // Move the intake up
@@ -133,7 +141,8 @@ public class Intake extends SubsystemBase {
     isPivotMoving = true;
     pivotTargetPosition = pivotDownOffset;
 
-    intakePivot.setControl(m_positionRequest.withPosition(pivotTargetPosition));
+    intakePivot.setControl(
+        m_dutyCycleRequest.withOutput(Preferences.getDouble("Pivot/Pivot Duty Cycle", 0.5)));
   }
 
   private boolean intakePivotIsFinished() {
@@ -188,7 +197,8 @@ public class Intake extends SubsystemBase {
   public void startIntakeRoller(double multiplier) { // Start the intake rollers
     isRollerSpinning = true;
     intakeRollerMainLeft.setControl(
-        m_dutyCycleRequest.withOutput(0.5 * multiplier)); // TODO: Make this a preference.
+        m_dutyCycleRequest.withOutput(
+            Preferences.getDouble("Intake/Roller Duty Cycle", 0.5) * multiplier));
   }
 
   public void stopIntakeRoller() { // Stop the intake rollers
