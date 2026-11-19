@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,7 +28,8 @@ public class Intake extends SubsystemBase {
       new TalonFX(Constants.INTAKE_ROLLER_FOLLOWER_RIGHT, CANBus.roboRIO());
 
   private boolean isIntakeUp = true; // Track the state of the intake (up or down)
-  private boolean isRollerSpinning = false; // Track the state of the intake rollers (spinning or not)
+  private boolean isRollerSpinning =
+      false; // Track the state of the intake rollers (spinning or not)
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
   private double pivotUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
   private double pivotDownOffset =
@@ -187,7 +187,8 @@ public class Intake extends SubsystemBase {
 
   public void startIntakeRoller(double multiplier) { // Start the intake rollers
     isRollerSpinning = true;
-    intakeRollerMainLeft.setControl(m_dutyCycleRequest.withOutput(0.5 * multiplier)); // TODO: Make this a preference.
+    intakeRollerMainLeft.setControl(
+        m_dutyCycleRequest.withOutput(0.5 * multiplier)); // TODO: Make this a preference.
   }
 
   public void stopIntakeRoller() { // Stop the intake rollers
@@ -195,7 +196,8 @@ public class Intake extends SubsystemBase {
     intakeRollerMainLeft.stopMotor();
   }
 
-  public FunctionalCommand getIntakeSpinCommand(Intake intakeSubsystem) { // Command to spin the intake rollers normally.
+  public FunctionalCommand getIntakeSpinCommand(
+      Intake intakeSubsystem) { // Command to spin the intake rollers normally.
     return new FunctionalCommand(
         // initialize (starting)
         () -> startIntakeRoller(1.0),
@@ -211,7 +213,8 @@ public class Intake extends SubsystemBase {
         intakeSubsystem);
   }
 
-  public FunctionalCommand getIntakeSpinReverseCommand(Intake intakeSubsystem) { // Command to spin the intake in reverse.
+  public FunctionalCommand getIntakeSpinReverseCommand(
+      Intake intakeSubsystem) { // Command to spin the intake in reverse.
     return new FunctionalCommand(
         // initialize (starting)
         () -> startIntakeRoller(-1.0),

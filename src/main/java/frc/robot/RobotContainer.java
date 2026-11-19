@@ -71,7 +71,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
-        
+
         intake = new Intake();
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
@@ -151,14 +151,18 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    SmartDashboard.putData("Intake/Calibrate Intake Up", Commands.runOnce(() -> intake.setIsIntakeUp(true), intake));
-    SmartDashboard.putData("Intake/Calibrate Intake Down", Commands.runOnce(() -> intake.setIsIntakeUp(false), intake));
+    SmartDashboard.putData(
+        "Intake/Calibrate Intake Up", Commands.runOnce(() -> intake.setIsIntakeUp(true), intake));
+    SmartDashboard.putData(
+        "Intake/Calibrate Intake Down",
+        Commands.runOnce(() -> intake.setIsIntakeUp(false), intake));
 
     SmartDashboard.putData("Intake/Intake Up", intake.getIntakeUpCommand(intake));
     SmartDashboard.putData("Intake/Intake Down", intake.getIntakeDownCommand(intake));
 
     SmartDashboard.putData("Intake/Intake Spin", intake.getIntakeSpinCommand(intake));
-    SmartDashboard.putData("Intake/Intake Spin Reverse", intake.getIntakeSpinReverseCommand(intake));
+    SmartDashboard.putData(
+        "Intake/Intake Spin Reverse", intake.getIntakeSpinReverseCommand(intake));
 
     SmartDashboard.putData("Intake/Intake Stop", Commands.runOnce(() -> intake.stop(), intake));
   }
@@ -171,21 +175,21 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* ----- Controller Bindings -----
-     * Left stick: translation
-     * Right stick: rotation
-    
-     * Left stick click: reset gyro to 0°
-    
-     * A button: lock to 0°
-     * X button: switch to X pattern
-     * B button: lower intake
-     * Y button: raise intake
-     
-     * Right trigger: spin intake forward
-     * Left trigger: spin intake reverse
-     * Right bumper: stop intake
-     * Left bumper: stop intake
-       ------------------------------- */
+    * Left stick: translation
+    * Right stick: rotation
+
+    * Left stick click: reset gyro to 0°
+
+    * A button: lock to 0°
+    * X button: switch to X pattern
+    * B button: lower intake
+    * Y button: raise intake
+
+    * Right trigger: spin intake forward
+    * Left trigger: spin intake reverse
+    * Right bumper: stop intake
+    * Left bumper: stop intake
+      ------------------------------- */
 
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -218,26 +222,14 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    
-    controller
-        .rightTrigger()
-        .onTrue(intake.getIntakeSpinCommand(intake));
-    controller
-        .rightBumper()
-        .onTrue(Commands.runOnce(() -> intake.stop(), intake));
-    controller
-        .leftBumper()
-        .onTrue(intake.getIntakeSpinReverseCommand(intake));
-    controller
-        .leftBumper()
-        .onTrue(Commands.runOnce(() -> intake.stop(), intake));
-    
-    controller
-        .b()
-        .onTrue(intake.getIntakeDownCommand(intake));
-    controller
-        .y()
-        .onTrue(intake.getIntakeUpCommand(intake));
+
+    controller.rightTrigger().onTrue(intake.getIntakeSpinCommand(intake));
+    controller.rightBumper().onTrue(Commands.runOnce(() -> intake.stop(), intake));
+    controller.leftBumper().onTrue(intake.getIntakeSpinReverseCommand(intake));
+    controller.leftBumper().onTrue(Commands.runOnce(() -> intake.stop(), intake));
+
+    controller.b().onTrue(intake.getIntakeDownCommand(intake));
+    controller.y().onTrue(intake.getIntakeUpCommand(intake));
   }
 
   /**
