@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
   public boolean isPivotMoving = false; // Track if the pivot is currently moving
   private double pivotUpOffset = 0.0; // Track the encoder offset of the intake pivot when it is up
   private double pivotDownOffset =
-      0.0; // Track the encoder offset of the intake pivot when it is down
+      2.0; // Track the encoder offset of the intake pivot when it is down
   private double pivotTargetPosition = 0.0;
 
   private final PositionVoltage m_positionRequest = new PositionVoltage(0).withSlot(0);
@@ -208,7 +208,9 @@ public class Intake extends SubsystemBase {
         // end (ending, receives boolean interrupted)
         interrupted -> stopIntakeRoller(),
         // isFinished (returns boolean)
-        () -> intakePivotIsFinished(),
+        () -> {
+          return false; // This command never finishes on its own, it must be interrupted.
+        },
         // requirements
         intakeSubsystem);
   }
@@ -225,7 +227,9 @@ public class Intake extends SubsystemBase {
         // end (ending, receives boolean interrupted)
         interrupted -> stopIntakeRoller(),
         // isFinished (returns boolean)
-        () -> intakePivotIsFinished(),
+        () -> {
+          return false; // This command never finishes on its own, it must be interrupted.
+        },
         // requirements
         intakeSubsystem);
   }
@@ -239,6 +243,9 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("Pivot/Pivot Target Position", pivotTargetPosition);
     SmartDashboard.putBoolean("Pivot/Pivot Is Up", isIntakeUp);
     SmartDashboard.putBoolean("Pivot/Pivot Is Moving", isPivotMoving);
+    SmartDashboard.putNumber("Pivot/Pivot Position", intakePivot.getPosition().getValueAsDouble());
+    // Roller logging
+    SmartDashboard.putBoolean("Intake/Roller Is Spinning", isRollerSpinning);
   }
 
   public void stop() { // Stop all intake motors
